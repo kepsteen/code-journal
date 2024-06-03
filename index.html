@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -11,16 +11,37 @@
       integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
       crossorigin="anonymous"
       referrerpolicy="no-referrer" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lora:wght@650&display=swap"
+      rel="stylesheet" />
     <link rel="stylesheet" href="css/reset.css" />
     <link rel="stylesheet" href="css/layout.css" />
     <link rel="stylesheet" href="css/styles.css" />
   </head>
   <body>
-    <header>
-      <div class="container"></div>
+    <header class="row header">
+      <div class="container">
+        <h1>Code Journal</h1>
+      </div>
     </header>
     <main class="container">
-      <div data-view="entry-form"></div>
+      <div class="" data-view="entry-form">
+        <h2>New Entry</h2>
+        <img
+          src="images/placeholder-image-square.jpg"
+          alt="placeholder image" />
+        <form action="">
+          <label for="title">Title</label>
+          <input type="text" name="title" id="title" />
+          <label for="photo-url">Photo URL</label>
+          <input type="text" name="photo-url" id="photo-url" />
+          <label for="notes">Notes</label>
+          <textarea name="notes" id="notes" cols="30" rows="10"></textarea>
+          <button type="submit">Submit</button>
+        </form>
+      </div>
       <div data-view="entries" class="hidden"></div>
     </main>
     <script src="js/data.js"></script>
