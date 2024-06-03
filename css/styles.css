@@ -2,14 +2,24 @@ html {
   font-size: 0.8rem;
 }
 
+body {
+  background-color: #eee;
+}
+
 h1,
 h2,
-h3 {
+h3,
+label {
   font-family: Lora, serif;
-  font-weight: 650;
   font-style: normal;
   margin: 0;
   padding: 10px 0;
+}
+
+input[type='text'] {
+  font-family: Lora, serif;
+  font-style: normal;
+  font-weight: 400;
 }
 
 .container {
@@ -20,6 +30,23 @@ h3 {
   margin-top: 0;
   background-color: #4b2473;
   color: white;
+}
+
+.save-btn {
+  justify-content: flex-end;
+}
+
+#save-btn {
+  background-color: #4b2473;
+  border-radius: 5px;
+  color: white;
+  padding: 6px;
+}
+
+input,
+textarea {
+  padding: 4px 0;
+  border: 1px solid rgba(128, 128, 128, 0.409);
 }
 
 @media screen and (width >= 768px) {
