@@ -22,14 +22,19 @@
   </head>
   <body>
     <header class="header">
-      <div class="row container">
-        <div class="column-half">
+      <div class="row container nowrap">
+        <div class="align-end shrink">
           <h1>Code Journal</h1>
+        </div>
+        <div class="column-fourth align-end links">
+          <h3>
+            <a href="#" id="entries-link">Entries</a>
+          </h3>
         </div>
       </div>
     </header>
     <main class="container">
-      <div class="hidden" data-view="entry-form">
+      <div class="hidden" data-view="entry-form" id="entry-form">
         <form action="" id="new-entry-form">
           <div class="row">
             <div class="column-half">
@@ -47,7 +52,7 @@
               <label for="title">Title</label>
               <input type="text" name="title" id="title" required />
               <label for="photo-url">Photo URL</label>
-              <input type="text" name="photo-url" id="photo-url" required />
+              <input type="text" name="photoURL" id="photo-url" required />
             </div>
           </div>
           <div class="row">
@@ -60,19 +65,23 @@
                 rows="8"
                 required></textarea>
               <div class="row save-btn">
-                <button type="submit" id="save-btn">SAVE</button>
+                <button type="submit" class="purple-button" id="save-btn">
+                  SAVE
+                </button>
               </div>
             </div>
           </div>
         </form>
       </div>
-      <div data-view="entries" class="card-container">
+      <div class="" data-view="entries" id="entry-container">
         <div class="row space-between">
           <h1>Entries</h1>
-          <button class="align-center">NEW</button>
+          <a href="#" class="purple-button align-center" id="new-btn">New</a>
         </div>
-        <ul class="card-list flex justify-center">
-          <li id="no-entries">No entries Have been recorded.</li>
+        <ul class="card-list">
+          <li class="column-full" id="no-entries">
+            No entries Have been recorded.
+          </li>
         </ul>
       </div>
     </main>

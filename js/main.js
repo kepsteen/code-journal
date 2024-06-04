@@ -3,10 +3,18 @@ const $photoURL = document.querySelector('#photo-url');
 const $newEntryImage = document.querySelector('#new-entry-image');
 const $newEntryForm = document.querySelector('#new-entry-form');
 const $cardList = document.querySelector('.card-list');
+const $entryFormContainer = document.querySelector('#entry-form');
+const $entryContainer = document.querySelector('#entry-container');
+const $entriesAnchor = document.querySelector('#entries-link');
+const $newEntryBtn = document.querySelector('#new-btn');
 if (!$photoURL) throw new Error('no photoURL input found');
 if (!$newEntryImage) throw new Error('no image found');
 if (!$newEntryForm) throw new Error('no form element found');
 if (!$cardList) throw new Error('no card list found');
+if (!$entryFormContainer) throw new Error('no entry form container found');
+if (!$entryContainer) throw new Error('no entry container found');
+if (!$entriesAnchor) throw new Error('no entries anchor found');
+if (!$newEntryBtn) throw new Error('no new entry button found');
 $photoURL.addEventListener('input', () => {
   const photoURL = $photoURL.value;
   $newEntryImage.setAttribute('src', photoURL);
@@ -24,6 +32,9 @@ $newEntryForm.addEventListener('submit', (event) => {
   data.nextEntryId++;
   $newEntryImage.setAttribute('src', 'images/placeholder-image-square.jpg');
   $newEntryForm.reset();
+  $cardList.prepend(renderEntry(data.entries[0]));
+  viewSwap('entries');
+  if (data.entries.length === 0) toggleNoEntries();
 });
 function renderEntry(entry) {
   const $listElement = document.createElement('li');
@@ -56,10 +67,35 @@ function renderEntry(entry) {
   $row.appendChild($columnHalf2);
   $card.appendChild($row);
   $listElement.appendChild($card);
-  $cardList.appendChild($listElement);
+  return $listElement;
+}
+function toggleNoEntries() {
+  const $noEntry = document.querySelector('#no-entries');
+  if ($noEntry) $noEntry.setAttribute('class', 'hidden');
 }
 document.addEventListener('DOMContentLoaded', () => {
+  if (data.entries.length !== 0) {
+    toggleNoEntries();
+  }
   for (let i = 0; i < data.entries.length; i++) {
-    renderEntry(data.entries[i]);
+    $cardList.appendChild(renderEntry(data.entries[i]));
   }
 });
+function viewSwap(view) {
+  if ($entryFormContainer.dataset.view === view) {
+    $entryFormContainer.setAttribute('class', '');
+    $entryContainer.setAttribute('class', 'hidden');
+  } else if ($entryContainer.dataset.view === view) {
+    $entryContainer.setAttribute('class', '');
+    $entryFormContainer.setAttribute('class', 'hidden');
+  }
+  data.view = view;
+}
+function handleEntriesClick() {
+  viewSwap('entries');
+}
+function handleNewEntryClick() {
+  viewSwap('entry-form');
+}
+$entriesAnchor.addEventListener('click', handleEntriesClick);
+$newEntryBtn.addEventListener('click', handleNewEntryClick);

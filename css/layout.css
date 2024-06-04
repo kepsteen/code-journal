@@ -4,7 +4,7 @@
 
 .container {
   max-width: 575px;
-  margin: 0 20px;
+  margin: 0 auto;
   padding: 0 1.5rem;
 }
 
@@ -30,18 +30,28 @@
   align-self: center;
 }
 
+.align-end {
+  align-self: flex-end;
+}
+
 .justify-center {
   justify-content: center;
 }
 
+.nowrap {
+  flex-wrap: nowrap;
+}
+
+.shrink {
+  flex-shrink: 1;
+}
+
 .column-full,
 .column-half,
-.column-fourth,
-.column-three-fourths {
+.column-fourth {
   width: 100%;
 }
 
-/* Issue 2 CSS */
 @media screen and (width >= 768px) {
   .container {
     max-width: 900px;
@@ -52,13 +62,7 @@
     flex-basis: 50%;
   }
 
-  /* Issue 2 CSS */
-
   .column-fourth {
     flex-basis: 25%;
-  }
-
-  .column-three-fourths {
-    flex-basis: calc(300% / 4);
   }
 }
