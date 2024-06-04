@@ -7,6 +7,7 @@ const $entryFormContainer = document.querySelector('#entry-form');
 const $entryContainer = document.querySelector('#entry-container');
 const $entriesAnchor = document.querySelector('#entries-link');
 const $newEntryBtn = document.querySelector('#new-btn');
+const $noEntry = document.querySelector('#no-entries');
 if (!$photoURL) throw new Error('no photoURL input found');
 if (!$newEntryImage) throw new Error('no image found');
 if (!$newEntryForm) throw new Error('no form element found');
@@ -15,6 +16,7 @@ if (!$entryFormContainer) throw new Error('no entry form container found');
 if (!$entryContainer) throw new Error('no entry container found');
 if (!$entriesAnchor) throw new Error('no entries anchor found');
 if (!$newEntryBtn) throw new Error('no new entry button found');
+if (!$noEntry) throw new Error('no no entry li element found');
 $photoURL.addEventListener('input', () => {
   const photoURL = $photoURL.value;
   $newEntryImage.setAttribute('src', photoURL);
@@ -34,7 +36,7 @@ $newEntryForm.addEventListener('submit', (event) => {
   $newEntryForm.reset();
   $cardList.prepend(renderEntry(data.entries[0]));
   viewSwap('entries');
-  if (data.entries.length === 0) toggleNoEntries();
+  toggleNoEntries();
 });
 function renderEntry(entry) {
   const $listElement = document.createElement('li');
@@ -70,11 +72,12 @@ function renderEntry(entry) {
   return $listElement;
 }
 function toggleNoEntries() {
-  const $noEntry = document.querySelector('#no-entries');
-  if ($noEntry) $noEntry.setAttribute('class', 'hidden');
+  if (!$noEntry.classList.contains('hidden') && data.entries.length !== 0) {
+    $noEntry.classList.add('hidden');
+  }
 }
 document.addEventListener('DOMContentLoaded', () => {
-  if (data.entries.length !== 0) {
+  if (data.entries.length === 0) {
     toggleNoEntries();
   }
   for (let i = 0; i < data.entries.length; i++) {
