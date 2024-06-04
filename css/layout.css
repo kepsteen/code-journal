@@ -4,7 +4,7 @@
 
 .container {
   max-width: 575px;
-  margin: 0 auto;
+  margin: 0 30px;
   padding: 0 1.5rem;
 }
 
@@ -13,14 +13,24 @@
   flex-wrap: wrap;
 }
 
+.flex {
+  display: flex;
+}
+
+.flex-col {
+  flex-direction: column;
+  flex-grow: 1;
+}
+
 .column-full,
 .column-half {
   width: 100%;
 }
 
-@media screen and (min-width: 768px) {
+@media screen and (width >= 768px) {
   .container {
     max-width: 900px;
+    margin: 0 auto;
   }
 
   .column-full,
@@ -29,6 +39,6 @@
   }
 
   .column-half {
-    width: 50%;
+    flex-basis: 50%;
   }
 }
