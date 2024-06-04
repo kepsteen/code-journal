@@ -1,30 +1,65 @@
 'use strict';
 const $photoURL = document.querySelector('#photo-url');
 const $newEntryImage = document.querySelector('#new-entry-image');
-const $saveBtn = document.querySelector('#save-btn');
-const $title = document.querySelector('#title');
-const $notes = document.querySelector('#notes');
 const $newEntryForm = document.querySelector('#new-entry-form');
+const $cardList = document.querySelector('.card-list');
 if (!$photoURL) throw new Error('no photoURL input found');
 if (!$newEntryImage) throw new Error('no image found');
-if (!$saveBtn) throw new Error('no save button found');
-if (!$title) throw new Error('no title input found');
-if (!$notes) throw new Error('no notes input found');
 if (!$newEntryForm) throw new Error('no form element found');
+if (!$cardList) throw new Error('no card list found');
 $photoURL.addEventListener('input', () => {
   const photoURL = $photoURL.value;
   $newEntryImage.setAttribute('src', photoURL);
 });
-$saveBtn.addEventListener('click', (event) => {
+$newEntryForm.addEventListener('submit', (event) => {
   event.preventDefault();
-  let entry = {
-    title: $title.value,
-    photoURL: $photoURL.value,
-    notes: $notes.value,
+  const $formElements = $newEntryForm.elements;
+  const entry = {
+    title: $formElements.title.value,
+    photoURL: $formElements.photoURL.value,
+    notes: $formElements.notes.value,
     entryId: data.nextEntryId,
   };
   data.entries.unshift(entry);
   data.nextEntryId++;
   $newEntryImage.setAttribute('src', 'images/placeholder-image-square.jpg');
   $newEntryForm.reset();
+});
+function renderEntry(entry) {
+  const $listElement = document.createElement('li');
+  $listElement.setAttribute('class', 'card-wrapper');
+  const $card = document.createElement('div');
+  $card.setAttribute('class', 'card');
+  const $row = document.createElement('div');
+  $row.setAttribute('class', 'row');
+  const $columnHalf = document.createElement('div');
+  $columnHalf.setAttribute('class', 'column-half flex justify-center');
+  const $cardImg = document.createElement('img');
+  $cardImg.setAttribute('class', 'card-img');
+  $cardImg.setAttribute('src', entry.photoURL);
+  const $columnHalf2 = document.createElement('div');
+  $columnHalf2.setAttribute('class', 'column-half');
+  const $row2 = document.createElement('div');
+  $row2.setAttribute('class', 'row space-between');
+  const $cardTitle = document.createElement('h2');
+  $cardTitle.innerText = entry.title;
+  const $pencilIcon = document.createElement('i');
+  $pencilIcon.setAttribute('class', 'fa-solid fa-pencil fa-lg align-center');
+  const $cardText = document.createElement('p');
+  $cardText.innerText = entry.notes;
+  $row2.appendChild($cardTitle);
+  $row2.appendChild($pencilIcon);
+  $columnHalf2.appendChild($row2);
+  $columnHalf2.appendChild($cardText);
+  $columnHalf.appendChild($cardImg);
+  $row.appendChild($columnHalf);
+  $row.appendChild($columnHalf2);
+  $card.appendChild($row);
+  $listElement.appendChild($card);
+  $cardList.appendChild($listElement);
+}
+document.addEventListener('DOMContentLoaded', () => {
+  for (let i = 0; i < data.entries.length; i++) {
+    renderEntry(data.entries[i]);
+  }
 });
