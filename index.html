@@ -29,7 +29,7 @@
       </div>
     </header>
     <main class="container">
-      <div class="" data-view="entry-form">
+      <div class="hidden" data-view="entry-form">
         <form action="" id="new-entry-form">
           <div class="row">
             <div class="column-half">
@@ -66,7 +66,84 @@
           </div>
         </form>
       </div>
-      <div data-view="entries" class="hidden"></div>
+      <div data-view="entries" class="card-container">
+        <div class="row space-between">
+          <h1>Entries</h1>
+          <button class="align-center">NEW</button>
+        </div>
+        <ul class="card-list">
+          <li class="card-wrapper">
+            <div class="card">
+              <div class="row">
+                <div class="column-full">
+                  <img
+                    src="https://miro.medium.com/v2/resize:fit:1200/1*C-zXmTMHObZWyZBUbdruGg.jpeg"
+                    alt="dog coding"
+                    class="card-img" />
+                </div>
+                <div class="column-full">
+                  <div class="row space-between">
+                    <h2>Fido</h2>
+                    <i class="fa-solid fa-pencil fa-lg align-center"></i>
+                  </div>
+                  <p>
+                    Fido, a scruffy collie mix with a surprisingly logical mind,
+                    thrived in his unconventional career as a software engineer.
+                    pen_spark exclamation Despite the lack of opposable thumbs,
+                    Fido had mastered the keyboard with his dexterous paws. His
+                    days were filled with the rhythmic clacking of paws on keys
+                    as he navigated complex functions and debugged stubborn
+                    errors. While his human colleagues enjoyed pizza lunches,
+                    Fido preferred a good chew toy and a strategically placed
+                    bone to gnaw on while contemplating a particularly tricky
+                    for loop.exclamation Fido's secret weapon was his unwavering
+                    focus. Unencumbered by social media distractions or the urge
+                    to check the latest dog park gossip, Fido could delve deep
+                    into a coding problem with laser-like concentration. His
+                    ability to think outside the box, or more accurately,
+                    outside the doghouse, often led to elegant solutions that
+                    left his human coworkers scratching their heads in
+                    admiration.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </li>
+          <li class="card-wrapper">
+            <div class="card">
+              <div class="row">
+                <div class="column-full">
+                  <img
+                    src="https://as1.ftcdn.net/v2/jpg/03/43/05/10/1000_F_343051093_GVVmkNacHYXI23NmVl35h34jYfaBYXBe.jpg"
+                    alt="turtle coding"
+                    class="card-img" />
+                </div>
+                <div class="column-full">
+                  <div class="row space-between">
+                    <h2>Timmy</h2>
+                    <i class="fa-solid fa-pencil fa-lg align-center"></i>
+                  </div>
+                  <p>
+                    Timmy the turtle, perched atop his ergonomic shell-riser,
+                    tapped away at his miniature keyboard with surprising
+                    tenacity. His tiny claws flew across the keys, navigating
+                    the intricacies of TypeScript. Lines of code shimmered on
+                    the screen, meticulously crafted with type annotations and
+                    interfaces. Timmy, a champion of code clarity, ensured every
+                    variable had a clear type (string, number, boolean) and
+                    functions declared their expected inputs and outputs. This
+                    meticulousness, though slow due to his deliberate pace,
+                    often prevented errors from reaching production. Testing was
+                    Timmy's pride and joy. He wrote unit tests with unwavering
+                    determination, ensuring each function performed flawlessly
+                    before merging his code into the main branch.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
     </main>
     <script src="js/data.js"></script>
     <script src="js/main.js"></script>

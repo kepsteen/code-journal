@@ -4,7 +4,7 @@
 
 .container {
   max-width: 575px;
-  margin: 0 30px;
+  margin: 0 20px;
   padding: 0 1.5rem;
 }
 
@@ -22,23 +22,39 @@
   flex-grow: 1;
 }
 
+.space-between {
+  justify-content: space-between;
+}
+
+.align-center {
+  align-self: center;
+}
+
 .column-full,
-.column-half {
+.column-half,
+.column-fourth,
+.column-three-fourths {
   width: 100%;
 }
 
+/* Issue 2 CSS */
 @media screen and (width >= 768px) {
   .container {
     max-width: 900px;
     margin: 0 auto;
   }
 
-  .column-full,
-  .column-half {
-    padding: 0 0.75rem;
-  }
-
   .column-half {
     flex-basis: 50%;
+  }
+
+  /* Issue 2 CSS */
+
+  .column-fourth {
+    flex-basis: 25%;
+  }
+
+  .column-three-fourths {
+    flex-basis: calc(300% / 4);
   }
 }

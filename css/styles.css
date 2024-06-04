@@ -4,22 +4,42 @@ html {
 
 body {
   background-color: #eee;
+  font-family: Lora, serif;
 }
 
 h1,
 h2,
 h3,
 label {
-  font-family: Lora, serif;
   font-style: normal;
+  font-weight: 700;
   margin: 0;
   padding: 10px 0;
 }
 
+i {
+  color: #4b2473;
+}
+
+p {
+  margin: 0;
+  font-weight: 400;
+  font-size: 14px;
+  color: #292929;
+}
+
 img {
+  padding-right: 0;
+}
+
+input,
+textarea {
+  padding: 8px 0 8px 8px;
+  border: 1px solid rgba(128, 128, 128, 0.409);
+  border-radius: 5px;
+  display: block;
   width: 100%;
-  max-height: 300px;
-  object-fit: cover;
+  margin: 6px 0;
 }
 
 form {
@@ -43,21 +63,39 @@ header.container {
   justify-content: flex-end;
 }
 
-#save-btn {
+button {
   background-color: #4b2473;
   border-radius: 5px;
   color: white;
   padding: 6px;
+  height: 50%;
 }
 
-input,
-textarea {
-  padding: 8px 0 8px 8px;
-  border: 1px solid rgba(128, 128, 128, 0.409);
-  border-radius: 5px;
-  display: block;
+#new-entry-image {
   width: 100%;
-  margin: 6px 0;
+  max-height: 300px;
+  object-fit: cover;
+}
+
+/* Issue 2 CSS */
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.card-list {
+  width: 100%;
+}
+
+.card-wrapper {
+  outline: 1px solid orangered;
+  margin-bottom: 20px;
+}
+
+.card-img {
+  max-width: 100%;
 }
 
 @media screen and (width >= 768px) {
@@ -65,11 +103,8 @@ textarea {
     font-size: 100%;
   }
 
-  .column-full,
-  .column-half {
-    /* display: flex;
-    /* flex-direction: column;
-    flex-grow: 1; */
+  img {
+    padding-right: 0.75rem;
   }
 
   .container {
@@ -79,4 +114,6 @@ textarea {
   #notes {
     width: 100%;
   }
+
+  /* Issue 2 Css */
 }
