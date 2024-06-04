@@ -31,6 +31,11 @@ textarea {
   margin: 6px 0;
 }
 
+form,
+textarea {
+  flex-grow: 1;
+}
+
 @media screen and (width >= 768px) {
   .container {
     max-width: 900px;

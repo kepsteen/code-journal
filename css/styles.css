@@ -22,14 +22,14 @@ input[type='text'] {
   font-weight: 400;
 }
 
-.container {
-  text-align: left;
-}
-
 .header {
   margin-top: 0;
   background-color: #4b2473;
   color: white;
+}
+
+header.container {
+  width: 100%;
 }
 
 .save-btn {
@@ -47,10 +47,26 @@ input,
 textarea {
   padding: 4px 0;
   border: 1px solid rgba(128, 128, 128, 0.409);
+  border-radius: 5px;
 }
 
 @media screen and (width >= 768px) {
   html {
     font-size: 100%;
+  }
+
+  .column-full,
+  .column-half {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+  }
+
+  .container {
+    margin: 0 auto;
+  }
+
+  #notes {
+    width: 100%;
   }
 }
