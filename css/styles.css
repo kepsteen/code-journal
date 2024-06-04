@@ -16,10 +16,17 @@ label {
   padding: 10px 0;
 }
 
-input[type='text'] {
+img {
+  width: 100%;
+  max-height: 300px;
+  object-fit: cover;
+}
+
+form {
   font-family: Lora, serif;
   font-style: normal;
   font-weight: 400;
+  flex-grow: 1;
 }
 
 .header {
@@ -48,6 +55,9 @@ textarea {
   padding: 8px 0 8px 8px;
   border: 1px solid rgba(128, 128, 128, 0.409);
   border-radius: 5px;
+  display: block;
+  width: 100%;
+  margin: 6px 0;
 }
 
 @media screen and (width >= 768px) {
