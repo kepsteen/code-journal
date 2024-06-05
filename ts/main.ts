@@ -69,6 +69,7 @@ $newEntryForm.addEventListener('submit', (event: Event) => {
 function renderEntry(entry: Entry): HTMLLIElement {
   const $listElement = document.createElement('li');
   $listElement.setAttribute('class', 'card-wrapper');
+  $listElement.setAttribute('data-entry-id', `${entry.entryId}`);
   const $card = document.createElement('div');
   $card.setAttribute('class', 'card');
   const $row = document.createElement('div');
@@ -136,4 +137,14 @@ $entriesAnchor.addEventListener('click', () => {
 });
 $newEntryBtn.addEventListener('click', () => {
   viewSwap('entry-form');
+});
+
+$cardList.addEventListener('click', (event: Event): void => {
+  const $eventTarget = event.target as HTMLElement;
+  viewSwap('entry-form');
+  console.log(
+    'event target parent id',
+    $eventTarget.parentElement?.parentElement?.parentElement?.parentElement
+      ?.parentElement?.dataset.entryId,
+  );
 });
