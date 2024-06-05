@@ -4,7 +4,7 @@
 
 .container {
   max-width: 575px;
-  margin: 0 30px;
+  margin: 0 auto;
   padding: 0 1.5rem;
 }
 
@@ -22,8 +22,33 @@
   flex-grow: 1;
 }
 
+.space-between {
+  justify-content: space-between;
+}
+
+.align-center {
+  align-self: center;
+}
+
+.align-end {
+  align-self: flex-end;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.nowrap {
+  flex-wrap: nowrap;
+}
+
+.shrink {
+  flex-shrink: 1;
+}
+
 .column-full,
-.column-half {
+.column-half,
+.column-fourth {
   width: 100%;
 }
 
@@ -33,12 +58,11 @@
     margin: 0 auto;
   }
 
-  .column-full,
-  .column-half {
-    padding: 0 0.75rem;
-  }
-
   .column-half {
     flex-basis: 50%;
+  }
+
+  .column-fourth {
+    flex-basis: 25%;
   }
 }
