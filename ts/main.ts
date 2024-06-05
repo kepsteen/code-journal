@@ -104,13 +104,17 @@ function renderEntry(entry: Entry): HTMLLIElement {
 function toggleNoEntries(): void {
   if (!$noEntry.classList.contains('hidden') && data.entries.length !== 0) {
     $noEntry.classList.add('hidden');
+  } else if (
+    data.entries.length === 0 &&
+    $noEntry.classList.contains('hidden')
+  ) {
+    $noEntry.classList.remove('hidden');
   }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  if (data.entries.length === 0) {
-    toggleNoEntries();
-  }
+  viewSwap(data.view);
+  toggleNoEntries();
   for (let i = 0; i < data.entries.length; i++) {
     $cardList.appendChild(renderEntry(data.entries[i]));
   }
@@ -127,13 +131,9 @@ function viewSwap(view: string): void {
   data.view = view;
 }
 
-function handleEntriesClick(): void {
+$entriesAnchor.addEventListener('click', () => {
   viewSwap('entries');
-}
-
-function handleNewEntryClick(): void {
+});
+$newEntryBtn.addEventListener('click', () => {
   viewSwap('entry-form');
-}
-
-$entriesAnchor.addEventListener('click', handleEntriesClick);
-$newEntryBtn.addEventListener('click', handleNewEntryClick);
+});
