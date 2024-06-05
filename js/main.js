@@ -1,6 +1,6 @@
 'use strict';
 const $photoURL = document.querySelector('#photo-url');
-const $newEntryImage = document.querySelector('#new-entry-image');
+const $newEntryImage = document.querySelector('.entry-image');
 const $newEntryForm = document.querySelector('#new-entry-form');
 const $cardList = document.querySelector('.card-list');
 const $entryFormContainer = document.querySelector('#entry-form');
@@ -8,6 +8,9 @@ const $entryContainer = document.querySelector('#entry-container');
 const $entriesAnchor = document.querySelector('#entries-link');
 const $newEntryBtn = document.querySelector('#new-btn');
 const $noEntry = document.querySelector('#no-entries');
+const $titleInput = document.querySelector('#title');
+const $notesTextArea = document.querySelector('#notes');
+const $pageHeader = document.querySelector('#new-edit-entry');
 if (!$photoURL) throw new Error('no photoURL input found');
 if (!$newEntryImage) throw new Error('no image found');
 if (!$newEntryForm) throw new Error('no form element found');
@@ -17,6 +20,9 @@ if (!$entryContainer) throw new Error('no entry container found');
 if (!$entriesAnchor) throw new Error('no entries anchor found');
 if (!$newEntryBtn) throw new Error('no new entry button found');
 if (!$noEntry) throw new Error('no no entry li element found');
+if (!$titleInput) throw new Error('no title input element found');
+if (!$notesTextArea) throw new Error('no notes textarea element found');
+if (!$pageHeader) throw new Error('no page header found');
 $photoURL.addEventListener('input', () => {
   const photoURL = $photoURL.value;
   $newEntryImage.setAttribute('src', photoURL);
@@ -24,23 +30,43 @@ $photoURL.addEventListener('input', () => {
 $newEntryForm.addEventListener('submit', (event) => {
   event.preventDefault();
   const $formElements = $newEntryForm.elements;
-  const entry = {
-    title: $formElements.title.value,
-    photoURL: $formElements.photoURL.value,
-    notes: $formElements.notes.value,
-    entryId: data.nextEntryId,
-  };
-  data.entries.unshift(entry);
-  data.nextEntryId++;
+  if (data.editing === null) {
+    const entry = {
+      title: $formElements.title.value,
+      photoURL: $formElements.photoURL.value,
+      notes: $formElements.notes.value,
+      entryId: data.nextEntryId,
+    };
+    data.entries.unshift(entry);
+    data.nextEntryId++;
+    $cardList.prepend(renderEntry(data.entries[0]));
+  } else if (data.editing) {
+    const entry = {
+      title: $formElements.title.value,
+      photoURL: $formElements.photoURL.value,
+      notes: $formElements.notes.value,
+      entryId: data.editing.entryId,
+    };
+    for (let i = 0; i < data.entries.length; i++) {
+      if (data.entries[i].entryId === data.editing.entryId) {
+        data.entries[i] = entry;
+        const $listElementToReplace = document.querySelector(
+          `li[data-entry-id="${data.editing.entryId}"]`,
+        );
+        $listElementToReplace.replaceWith(renderEntry(data.entries[i]));
+      }
+    }
+  }
+  data.editing = null;
   $newEntryImage.setAttribute('src', 'images/placeholder-image-square.jpg');
   $newEntryForm.reset();
-  $cardList.prepend(renderEntry(data.entries[0]));
   viewSwap('entries');
   toggleNoEntries();
 });
 function renderEntry(entry) {
   const $listElement = document.createElement('li');
   $listElement.setAttribute('class', 'card-wrapper');
+  $listElement.setAttribute('data-entry-id', `${entry.entryId}`);
   const $card = document.createElement('div');
   $card.setAttribute('class', 'card');
   const $row = document.createElement('div');
@@ -102,5 +128,24 @@ $entriesAnchor.addEventListener('click', () => {
   viewSwap('entries');
 });
 $newEntryBtn.addEventListener('click', () => {
+  $newEntryForm.reset();
+  $newEntryImage.setAttribute('src', 'images/placeholder-image-square.jpg');
+  $pageHeader.innerText = 'New Entry';
   viewSwap('entry-form');
+});
+$cardList.addEventListener('click', (event) => {
+  const $eventTarget = event.target;
+  viewSwap('entry-form');
+  const $eventTargetLi = $eventTarget.closest('li');
+  for (let i = 0; i < data.entries.length; i++) {
+    if ($eventTargetLi.dataset.entryId === data.entries[i].entryId.toString()) {
+      let entry = data.entries[i];
+      data.editing = entry;
+      $titleInput.value = entry.title;
+      $photoURL.value = entry.photoURL;
+      $notesTextArea.value = entry.notes;
+      $newEntryImage.setAttribute('src', entry.photoURL);
+      $pageHeader.innerText = 'Edit Entry';
+    }
+  }
 });
