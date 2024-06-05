@@ -36,6 +36,13 @@ const $notesTextArea = document.querySelector('#notes') as HTMLTextAreaElement;
 const $pageHeader = document.querySelector(
   '#new-edit-entry',
 ) as HTMLHeadingElement;
+const $deleteAnchor = document.querySelector('#delete-a') as HTMLAnchorElement;
+const $confirmationModal = document.querySelector(
+  '#delete-entry-modal',
+) as HTMLDialogElement;
+const $confirmationButtons = document.querySelector(
+  '#confirm-btns',
+) as HTMLDivElement;
 
 if (!$photoURL) throw new Error('no photoURL input found');
 if (!$newEntryImage) throw new Error('no image found');
@@ -49,49 +56,9 @@ if (!$noEntry) throw new Error('no no entry li element found');
 if (!$titleInput) throw new Error('no title input element found');
 if (!$notesTextArea) throw new Error('no notes textarea element found');
 if (!$pageHeader) throw new Error('no page header found');
-
-$photoURL.addEventListener('input', () => {
-  const photoURL = $photoURL.value;
-  $newEntryImage.setAttribute('src', photoURL);
-});
-
-$newEntryForm.addEventListener('submit', (event: Event) => {
-  event.preventDefault();
-
-  const $formElements = $newEntryForm.elements as FormElements;
-  if (data.editing === null) {
-    const entry: Entry = {
-      title: $formElements.title.value,
-      photoURL: $formElements.photoURL.value,
-      notes: $formElements.notes.value,
-      entryId: data.nextEntryId,
-    };
-    data.entries.unshift(entry);
-    data.nextEntryId++;
-    $cardList.prepend(renderEntry(data.entries[0]));
-  } else if (data.editing) {
-    const entry: Entry = {
-      title: $formElements.title.value,
-      photoURL: $formElements.photoURL.value,
-      notes: $formElements.notes.value,
-      entryId: data.editing.entryId,
-    };
-    for (let i = 0; i < data.entries.length; i++) {
-      if (data.entries[i].entryId === data.editing.entryId) {
-        data.entries[i] = entry;
-        const $listElementToReplace = document.querySelector(
-          `li[data-entry-id="${data.editing.entryId}"]`,
-        ) as HTMLLIElement;
-        $listElementToReplace.replaceWith(renderEntry(data.entries[i]));
-      }
-    }
-  }
-  data.editing = null;
-  $newEntryImage.setAttribute('src', 'images/placeholder-image-square.jpg');
-  $newEntryForm.reset();
-  viewSwap('entries');
-  toggleNoEntries();
-});
+if (!$deleteAnchor) throw new Error('no delete anchor found');
+if (!$confirmationModal) throw new Error('no delete modal found');
+if (!$confirmationButtons) throw new Error('no confirmation buttons found');
 
 function renderEntry(entry: Entry): HTMLLIElement {
   const $listElement = document.createElement('li');
@@ -140,14 +107,6 @@ function toggleNoEntries(): void {
   }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  viewSwap(data.view);
-  toggleNoEntries();
-  for (let i = 0; i < data.entries.length; i++) {
-    $cardList.appendChild(renderEntry(data.entries[i]));
-  }
-});
-
 function viewSwap(view: string): void {
   if ($entryFormContainer.dataset.view === view) {
     $entryFormContainer.setAttribute('class', '');
@@ -158,6 +117,75 @@ function viewSwap(view: string): void {
   }
   data.view = view;
 }
+
+function deleteEntry(entry: Entry): void {
+  let indexToRemove = null;
+  for (let i = 0; i < data.entries.length; i++) {
+    if (data.entries[i].entryId === entry.entryId) {
+      indexToRemove = i;
+    }
+  }
+  if (indexToRemove !== null) {
+    data.entries.splice(indexToRemove, 1);
+  }
+  if (data.entries.length === 0) {
+    toggleNoEntries();
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  viewSwap(data.view);
+  toggleNoEntries();
+  for (let i = 0; i < data.entries.length; i++) {
+    $cardList.appendChild(renderEntry(data.entries[i]));
+  }
+});
+
+$photoURL.addEventListener('input', () => {
+  let photoURL = $photoURL.value;
+  if (photoURL === '') {
+    photoURL = 'images/placeholder-image-square.jpg';
+  }
+  $newEntryImage.setAttribute('src', photoURL);
+});
+
+$newEntryForm.addEventListener('submit', (event: Event) => {
+  event.preventDefault();
+
+  const $formElements = $newEntryForm.elements as FormElements;
+  if (data.editing === null) {
+    const entry: Entry = {
+      title: $formElements.title.value,
+      photoURL: $formElements.photoURL.value,
+      notes: $formElements.notes.value,
+      entryId: data.nextEntryId,
+    };
+    data.entries.unshift(entry);
+    data.nextEntryId++;
+    $cardList.prepend(renderEntry(data.entries[0]));
+  } else if (data.editing) {
+    const entry: Entry = {
+      title: $formElements.title.value,
+      photoURL: $formElements.photoURL.value,
+      notes: $formElements.notes.value,
+      entryId: data.editing.entryId,
+    };
+    for (let i = 0; i < data.entries.length; i++) {
+      if (data.entries[i].entryId === data.editing.entryId) {
+        data.entries[i] = entry;
+        const $listElementToReplace = document.querySelector(
+          `li[data-entry-id="${data.editing.entryId}"]`,
+        ) as HTMLLIElement;
+        $listElementToReplace.replaceWith(renderEntry(data.entries[i]));
+      }
+    }
+  }
+  data.editing = null;
+  $newEntryImage.setAttribute('src', 'images/placeholder-image-square.jpg');
+  $newEntryForm.reset();
+  viewSwap('entries');
+  toggleNoEntries();
+});
 
 $entriesAnchor.addEventListener('click', () => {
   viewSwap('entries');
@@ -181,7 +209,32 @@ $cardList.addEventListener('click', (event: Event): void => {
       $photoURL.value = entry.photoURL;
       $notesTextArea.value = entry.notes;
       $newEntryImage.setAttribute('src', entry.photoURL);
-      $pageHeader.innerText = 'Edit Entry';
+      $pageHeader.textContent = 'Edit Entry';
     }
+  }
+});
+
+$deleteAnchor.addEventListener('click', () => {
+  $confirmationModal.classList.add('flex');
+  $confirmationModal.showModal();
+});
+
+$confirmationButtons.addEventListener('click', (event: Event) => {
+  const $eventTarget = event.target as HTMLElement;
+  const entry: null | Entry = data.editing;
+  if ($eventTarget.id === 'confirm') {
+    if (entry !== null) {
+      const $listElementToDelete = document.querySelector(
+        `li[data-entry-id="${entry.entryId}"]`,
+      ) as HTMLLIElement;
+      $listElementToDelete.remove();
+      $confirmationModal.classList.remove('flex');
+      $confirmationModal.close();
+      viewSwap('entries');
+      deleteEntry(entry);
+    }
+  } else if ($eventTarget.id === 'cancel') {
+    $confirmationModal.classList.remove('flex');
+    $confirmationModal.close();
   }
 });
