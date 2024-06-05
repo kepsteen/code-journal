@@ -43,6 +43,7 @@ const $confirmationModal = document.querySelector(
 const $confirmationButtons = document.querySelector(
   '#confirm-btns',
 ) as HTMLDivElement;
+const $searchBar = document.querySelector('#search-bar') as HTMLInputElement;
 
 if (!$photoURL) throw new Error('no photoURL input found');
 if (!$newEntryImage) throw new Error('no image found');
@@ -59,6 +60,7 @@ if (!$pageHeader) throw new Error('no page header found');
 if (!$deleteAnchor) throw new Error('no delete anchor found');
 if (!$confirmationModal) throw new Error('no delete modal found');
 if (!$confirmationButtons) throw new Error('no confirmation buttons found');
+if (!$searchBar) throw new Error('no search bar found');
 
 function renderEntry(entry: Entry): HTMLLIElement {
   const $listElement = document.createElement('li');
@@ -133,6 +135,12 @@ function deleteEntry(entry: Entry): void {
   }
 }
 
+function clearCardList(): void {
+  while ($cardList.firstChild) {
+    $cardList.removeChild($cardList.firstChild);
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   viewSwap(data.view);
   toggleNoEntries();
@@ -199,23 +207,26 @@ $newEntryBtn.addEventListener('click', () => {
 
 $cardList.addEventListener('click', (event: Event): void => {
   const $eventTarget = event.target as HTMLElement;
-  viewSwap('entry-form');
-  const $eventTargetLi = $eventTarget.closest('li') as HTMLLIElement;
-  for (let i = 0; i < data.entries.length; i++) {
-    if ($eventTargetLi.dataset.entryId === data.entries[i].entryId.toString()) {
-      const entry = data.entries[i];
-      data.editing = entry;
-      $titleInput.value = entry.title;
-      $photoURL.value = entry.photoURL;
-      $notesTextArea.value = entry.notes;
-      $newEntryImage.setAttribute('src', entry.photoURL);
-      $pageHeader.textContent = 'Edit Entry';
+  if ($eventTarget.tagName === 'I') {
+    viewSwap('entry-form');
+    const $eventTargetLi = $eventTarget.closest('li') as HTMLLIElement;
+    for (let i = 0; i < data.entries.length; i++) {
+      if (
+        $eventTargetLi.dataset.entryId === data.entries[i].entryId.toString()
+      ) {
+        const entry = data.entries[i];
+        data.editing = entry;
+        $titleInput.value = entry.title;
+        $photoURL.value = entry.photoURL;
+        $notesTextArea.value = entry.notes;
+        $newEntryImage.setAttribute('src', entry.photoURL);
+        $pageHeader.textContent = 'Edit Entry';
+      }
     }
   }
 });
 
 $deleteAnchor.addEventListener('click', () => {
-  // $confirmationModal.classList.add('flex');
   $confirmationModal.showModal();
 });
 
@@ -228,7 +239,6 @@ $confirmationButtons.addEventListener('click', (event: Event) => {
         `li[data-entry-id="${entry.entryId}"]`,
       ) as HTMLLIElement;
       $listElementToDelete.remove();
-      // $confirmationModal.classList.remove('flex');
       $confirmationModal.close();
       viewSwap('entries');
       deleteEntry(entry);
@@ -236,5 +246,29 @@ $confirmationButtons.addEventListener('click', (event: Event) => {
   } else if ($eventTarget.id === 'cancel') {
     $confirmationModal.classList.remove('flex');
     $confirmationModal.close();
+  }
+});
+
+$searchBar.addEventListener('input', () => {
+  const keyword = $searchBar.value.toLowerCase();
+  if (keyword === '') {
+    clearCardList();
+    for (const entry of data.entries) {
+      $cardList.append(renderEntry(entry));
+    }
+  } else {
+    const entryMatchesKeyword = [];
+    for (let i = 0; i < data.entries.length; i++) {
+      if (
+        data.entries[i].title.toLowerCase().includes(keyword) ||
+        data.entries[i].notes.toLowerCase().includes(keyword)
+      ) {
+        entryMatchesKeyword.push(data.entries[i]);
+      }
+    }
+    clearCardList();
+    for (let i = 0; i < entryMatchesKeyword.length; i++) {
+      $cardList.appendChild(renderEntry(entryMatchesKeyword[i]));
+    }
   }
 });

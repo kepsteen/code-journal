@@ -118,13 +118,11 @@ ul {
   text-decoration: none;
 }
 
-/* Issue 4 CSS */
-
 dialog {
   outline: none;
   border: none;
   width: 240px;
-  height: 100px;
+  height: 120px;
 }
 
 dialog::backdrop {
@@ -153,6 +151,22 @@ dialog::backdrop {
 #confirm {
   color: white;
   background-color: #dc2626;
+}
+
+/* Issue 5 CSS */
+#confirm-text {
+  padding-bottom: 30px;
+}
+
+#confirm-text > p {
+  font-size: 14px;
+}
+
+#search-bar {
+  font-family: Lora, 'Font Awesome 5 Free', serif;
+  font-weight: 900;
+  margin-bottom: 10px;
+  flex-basis: 100%;
 }
 
 @media screen and (width >= 768px) {
@@ -184,5 +198,19 @@ dialog::backdrop {
 
   h1 {
     padding-left: 8px;
+  }
+
+  /* Issue 5 CSS */
+  dialog {
+    width: 300px;
+    height: 150px;
+  }
+
+  #confirm-text {
+    padding-bottom: 48px;
+  }
+
+  #confirm-text > p {
+    font-size: 18px;
   }
 }

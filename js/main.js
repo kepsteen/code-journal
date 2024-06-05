@@ -14,6 +14,7 @@ const $pageHeader = document.querySelector('#new-edit-entry');
 const $deleteAnchor = document.querySelector('#delete-a');
 const $confirmationModal = document.querySelector('#delete-entry-modal');
 const $confirmationButtons = document.querySelector('#confirm-btns');
+const $searchBar = document.querySelector('#search-bar');
 if (!$photoURL) throw new Error('no photoURL input found');
 if (!$newEntryImage) throw new Error('no image found');
 if (!$newEntryForm) throw new Error('no form element found');
@@ -29,6 +30,7 @@ if (!$pageHeader) throw new Error('no page header found');
 if (!$deleteAnchor) throw new Error('no delete anchor found');
 if (!$confirmationModal) throw new Error('no delete modal found');
 if (!$confirmationButtons) throw new Error('no confirmation buttons found');
+if (!$searchBar) throw new Error('no search bar found');
 function renderEntry(entry) {
   const $listElement = document.createElement('li');
   $listElement.setAttribute('class', 'card-wrapper');
@@ -97,6 +99,11 @@ function deleteEntry(entry) {
     toggleNoEntries();
   }
 }
+function clearCardList() {
+  while ($cardList.firstChild) {
+    $cardList.removeChild($cardList.firstChild);
+  }
+}
 document.addEventListener('DOMContentLoaded', () => {
   viewSwap(data.view);
   toggleNoEntries();
@@ -158,22 +165,25 @@ $newEntryBtn.addEventListener('click', () => {
 });
 $cardList.addEventListener('click', (event) => {
   const $eventTarget = event.target;
-  viewSwap('entry-form');
-  const $eventTargetLi = $eventTarget.closest('li');
-  for (let i = 0; i < data.entries.length; i++) {
-    if ($eventTargetLi.dataset.entryId === data.entries[i].entryId.toString()) {
-      const entry = data.entries[i];
-      data.editing = entry;
-      $titleInput.value = entry.title;
-      $photoURL.value = entry.photoURL;
-      $notesTextArea.value = entry.notes;
-      $newEntryImage.setAttribute('src', entry.photoURL);
-      $pageHeader.textContent = 'Edit Entry';
+  if ($eventTarget.tagName === 'I') {
+    viewSwap('entry-form');
+    const $eventTargetLi = $eventTarget.closest('li');
+    for (let i = 0; i < data.entries.length; i++) {
+      if (
+        $eventTargetLi.dataset.entryId === data.entries[i].entryId.toString()
+      ) {
+        const entry = data.entries[i];
+        data.editing = entry;
+        $titleInput.value = entry.title;
+        $photoURL.value = entry.photoURL;
+        $notesTextArea.value = entry.notes;
+        $newEntryImage.setAttribute('src', entry.photoURL);
+        $pageHeader.textContent = 'Edit Entry';
+      }
     }
   }
 });
 $deleteAnchor.addEventListener('click', () => {
-  // $confirmationModal.classList.add('flex');
   $confirmationModal.showModal();
 });
 $confirmationButtons.addEventListener('click', (event) => {
@@ -185,7 +195,6 @@ $confirmationButtons.addEventListener('click', (event) => {
         `li[data-entry-id="${entry.entryId}"]`,
       );
       $listElementToDelete.remove();
-      // $confirmationModal.classList.remove('flex');
       $confirmationModal.close();
       viewSwap('entries');
       deleteEntry(entry);
@@ -193,5 +202,28 @@ $confirmationButtons.addEventListener('click', (event) => {
   } else if ($eventTarget.id === 'cancel') {
     $confirmationModal.classList.remove('flex');
     $confirmationModal.close();
+  }
+});
+$searchBar.addEventListener('input', () => {
+  const keyword = $searchBar.value.toLowerCase();
+  if (keyword === '') {
+    clearCardList();
+    for (let entry of data.entries) {
+      $cardList.append(renderEntry(entry));
+    }
+  } else {
+    const entryMatchesKeyword = [];
+    for (let i = 0; i < data.entries.length; i++) {
+      if (
+        data.entries[i].title.toLowerCase().includes(keyword) ||
+        data.entries[i].notes.toLowerCase().includes(keyword)
+      ) {
+        entryMatchesKeyword.push(data.entries[i]);
+      }
+    }
+    clearCardList();
+    for (let i = 0; i < entryMatchesKeyword.length; i++) {
+      $cardList.appendChild(renderEntry(entryMatchesKeyword[i]));
+    }
   }
 });
