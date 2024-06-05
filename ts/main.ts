@@ -215,7 +215,7 @@ $cardList.addEventListener('click', (event: Event): void => {
 });
 
 $deleteAnchor.addEventListener('click', () => {
-  $confirmationModal.classList.add('flex');
+  // $confirmationModal.classList.add('flex');
   $confirmationModal.showModal();
 });
 
@@ -228,7 +228,7 @@ $confirmationButtons.addEventListener('click', (event: Event) => {
         `li[data-entry-id="${entry.entryId}"]`,
       ) as HTMLLIElement;
       $listElementToDelete.remove();
-      $confirmationModal.classList.remove('flex');
+      // $confirmationModal.classList.remove('flex');
       $confirmationModal.close();
       viewSwap('entries');
       deleteEntry(entry);

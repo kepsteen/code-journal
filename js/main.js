@@ -173,7 +173,7 @@ $cardList.addEventListener('click', (event) => {
   }
 });
 $deleteAnchor.addEventListener('click', () => {
-  $confirmationModal.classList.add('flex');
+  // $confirmationModal.classList.add('flex');
   $confirmationModal.showModal();
 });
 $confirmationButtons.addEventListener('click', (event) => {
@@ -185,7 +185,7 @@ $confirmationButtons.addEventListener('click', (event) => {
         `li[data-entry-id="${entry.entryId}"]`,
       );
       $listElementToDelete.remove();
-      $confirmationModal.classList.remove('flex');
+      // $confirmationModal.classList.remove('flex');
       $confirmationModal.close();
       viewSwap('entries');
       deleteEntry(entry);
