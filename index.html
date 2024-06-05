@@ -64,11 +64,24 @@
                 cols="30"
                 rows="8"
                 required></textarea>
-              <div class="row save-btn">
-                <button type="submit" class="purple-button" id="save-btn">
+              <div class="row space-between">
+                <a href="#delete" id="delete-a">Delete Entry</a>
+                <button
+                  type="submit"
+                  class="purple-button save-btn"
+                  id="save-btn">
                   SAVE
                 </button>
               </div>
+              <dialog class="flex-col space-between" id="delete-entry-modal">
+                <div class="row justify-center">
+                  <p>Are you sure?</p>
+                </div>
+                <div class="row space-between" id="confirm-btns">
+                  <a href="#" id="cancel">Cancel</a>
+                  <a href="#" id="confirm">Confirm</a>
+                </div>
+              </dialog>
             </div>
           </div>
         </form>

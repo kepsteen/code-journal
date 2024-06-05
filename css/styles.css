@@ -60,11 +60,6 @@ header.container {
   width: 100%;
 }
 
-.save-btn {
-  justify-content: flex-end;
-  height: 50%;
-}
-
 .purple-button {
   font-family: Lora, serif;
   background-color: #4b2473;
@@ -72,6 +67,7 @@ header.container {
   color: white;
   padding: 6px;
   height: 50%;
+  text-decoration: none;
 }
 
 .entry-image {
@@ -80,7 +76,14 @@ header.container {
   object-fit: cover;
 }
 
-/* Issue 2 CSS */
+#save-btn {
+  height: 30px;
+}
+
+#delete-a {
+  color: red;
+  text-decoration: underline;
+}
 
 ul {
   list-style: none;
@@ -110,9 +113,46 @@ ul {
   margin-right: auto;
 }
 
-a {
+.links a {
   color: white;
   text-decoration: none;
+}
+
+/* Issue 4 CSS */
+
+dialog {
+  outline: none;
+  border: none;
+  width: 240px;
+  height: 100px;
+}
+
+dialog::backdrop {
+  background: rgb(107, 106, 117);
+  background: linear-gradient(
+    90deg,
+    rgba(107, 106, 117, 0.3672) 0%,
+    rgba(0, 0, 0, 0.3095) 100%
+  );
+}
+
+#confirm-btns > a {
+  font-size: 16px;
+  font-family: lora, serif;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 4px 6px;
+  border-radius: 5px;
+}
+
+#cancel {
+  color: #292929;
+  background-color: #b6b6b6;
+}
+
+#confirm {
+  color: white;
+  background-color: #dc2626;
 }
 
 @media screen and (width >= 768px) {
