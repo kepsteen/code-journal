@@ -30,7 +30,9 @@ const $entriesAnchor = document.querySelector(
   '#entries-link',
 ) as HTMLAnchorElement;
 const $newEntryBtn = document.querySelector('#new-btn') as HTMLAnchorElement;
-const $noEntry = document.querySelector('#no-entries') as HTMLLIElement;
+const $noEntry = document.querySelector(
+  '#no-entries-added',
+) as HTMLParagraphElement;
 const $titleInput = document.querySelector('#title') as HTMLInputElement;
 const $notesTextArea = document.querySelector('#notes') as HTMLTextAreaElement;
 const $pageHeader = document.querySelector(
@@ -43,6 +45,10 @@ const $confirmationModal = document.querySelector(
 const $confirmationButtons = document.querySelector(
   '#confirm-btns',
 ) as HTMLDivElement;
+const $searchBar = document.querySelector('#search-bar') as HTMLInputElement;
+const $noEntriesFound = document.querySelector(
+  '#no-entries-found',
+) as HTMLParagraphElement;
 
 if (!$photoURL) throw new Error('no photoURL input found');
 if (!$newEntryImage) throw new Error('no image found');
@@ -59,6 +65,8 @@ if (!$pageHeader) throw new Error('no page header found');
 if (!$deleteAnchor) throw new Error('no delete anchor found');
 if (!$confirmationModal) throw new Error('no delete modal found');
 if (!$confirmationButtons) throw new Error('no confirmation buttons found');
+if (!$searchBar) throw new Error('no search bar found');
+if (!$noEntriesFound) throw new Error('no no entries found li found');
 
 function renderEntry(entry: Entry): HTMLLIElement {
   const $listElement = document.createElement('li');
@@ -199,23 +207,26 @@ $newEntryBtn.addEventListener('click', () => {
 
 $cardList.addEventListener('click', (event: Event): void => {
   const $eventTarget = event.target as HTMLElement;
-  viewSwap('entry-form');
-  const $eventTargetLi = $eventTarget.closest('li') as HTMLLIElement;
-  for (let i = 0; i < data.entries.length; i++) {
-    if ($eventTargetLi.dataset.entryId === data.entries[i].entryId.toString()) {
-      const entry = data.entries[i];
-      data.editing = entry;
-      $titleInput.value = entry.title;
-      $photoURL.value = entry.photoURL;
-      $notesTextArea.value = entry.notes;
-      $newEntryImage.setAttribute('src', entry.photoURL);
-      $pageHeader.textContent = 'Edit Entry';
+  if ($eventTarget.tagName === 'I') {
+    viewSwap('entry-form');
+    const $eventTargetLi = $eventTarget.closest('li') as HTMLLIElement;
+    for (let i = 0; i < data.entries.length; i++) {
+      if (
+        $eventTargetLi.dataset.entryId === data.entries[i].entryId.toString()
+      ) {
+        const entry = data.entries[i];
+        data.editing = entry;
+        $titleInput.value = entry.title;
+        $photoURL.value = entry.photoURL;
+        $notesTextArea.value = entry.notes;
+        $newEntryImage.setAttribute('src', entry.photoURL);
+        $pageHeader.textContent = 'Edit Entry';
+      }
     }
   }
 });
 
 $deleteAnchor.addEventListener('click', () => {
-  $confirmationModal.classList.add('flex');
   $confirmationModal.showModal();
 });
 
@@ -228,7 +239,6 @@ $confirmationButtons.addEventListener('click', (event: Event) => {
         `li[data-entry-id="${entry.entryId}"]`,
       ) as HTMLLIElement;
       $listElementToDelete.remove();
-      $confirmationModal.classList.remove('flex');
       $confirmationModal.close();
       viewSwap('entries');
       deleteEntry(entry);
@@ -236,5 +246,33 @@ $confirmationButtons.addEventListener('click', (event: Event) => {
   } else if ($eventTarget.id === 'cancel') {
     $confirmationModal.classList.remove('flex');
     $confirmationModal.close();
+  }
+});
+
+$searchBar.addEventListener('input', () => {
+  const keyword = $searchBar.value.toLowerCase();
+  const $listElementCollection =
+    $cardList.children as HTMLCollectionOf<HTMLLIElement>;
+  if (keyword === '') {
+    for (let i = 0; i < $listElementCollection.length; i++) {
+      $listElementCollection[i].classList.remove('hidden');
+    }
+    $noEntriesFound.classList.add('hidden');
+  } else {
+    let matchesFound = false;
+    for (let i = 0; i < $listElementCollection.length; i++) {
+      if (
+        !$listElementCollection[i].innerText.toLowerCase().includes(keyword)
+      ) {
+        $listElementCollection[i].classList.add('hidden');
+      } else if (
+        $listElementCollection[i].innerText.toLowerCase().includes(keyword)
+      ) {
+        matchesFound = true;
+      }
+    }
+    if (!matchesFound) {
+      $noEntriesFound.classList.remove('hidden');
+    }
   }
 });
