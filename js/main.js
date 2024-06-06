@@ -16,6 +16,7 @@ const $confirmationModal = document.querySelector('#delete-entry-modal');
 const $confirmationButtons = document.querySelector('#confirm-btns');
 const $searchBar = document.querySelector('#search-bar');
 const $noEntriesFound = document.querySelector('#no-entries-found');
+const $loginFormContainer = document.querySelector('#login-form');
 if (!$photoURL) throw new Error('no photoURL input found');
 if (!$newEntryImage) throw new Error('no image found');
 if (!$newEntryForm) throw new Error('no form element found');
@@ -33,6 +34,7 @@ if (!$confirmationModal) throw new Error('no delete modal found');
 if (!$confirmationButtons) throw new Error('no confirmation buttons found');
 if (!$searchBar) throw new Error('no search bar found');
 if (!$noEntriesFound) throw new Error('no no entries found li found');
+if (!$loginFormContainer) throw new Error('no login form found');
 function renderEntry(entry) {
   const $listElement = document.createElement('li');
   $listElement.setAttribute('class', 'card-wrapper');
@@ -81,9 +83,15 @@ function viewSwap(view) {
   if ($entryFormContainer.dataset.view === view) {
     $entryFormContainer.setAttribute('class', '');
     $entryContainer.setAttribute('class', 'hidden');
+    $loginFormContainer.setAttribute('class', 'hidden');
   } else if ($entryContainer.dataset.view === view) {
     $entryContainer.setAttribute('class', '');
     $entryFormContainer.setAttribute('class', 'hidden');
+    $loginFormContainer.setAttribute('class', 'hidden');
+  } else if ($loginFormContainer.dataset.view === view) {
+    $loginFormContainer.setAttribute('class', '');
+    $entryFormContainer.setAttribute('class', 'hidden');
+    $entryContainer.setAttribute('class', 'hidden');
   }
   data.view = view;
 }
@@ -102,10 +110,14 @@ function deleteEntry(entry) {
   }
 }
 document.addEventListener('DOMContentLoaded', () => {
-  viewSwap(data.view);
-  toggleNoEntries();
-  for (let i = 0; i < data.entries.length; i++) {
-    $cardList.appendChild(renderEntry(data.entries[i]));
+  if (data.currentUser === null) {
+    viewSwap('login-form');
+  } else {
+    viewSwap(data.view);
+    toggleNoEntries();
+    for (let i = 0; i < data.entries.length; i++) {
+      $cardList.appendChild(renderEntry(data.entries[i]));
+    }
   }
 });
 $photoURL.addEventListener('input', () => {
@@ -124,6 +136,7 @@ $newEntryForm.addEventListener('submit', (event) => {
       photoURL: $formElements.photoURL.value,
       notes: $formElements.notes.value,
       entryId: data.nextEntryId,
+      author: 'user',
     };
     data.entries.unshift(entry);
     data.nextEntryId++;
@@ -134,6 +147,7 @@ $newEntryForm.addEventListener('submit', (event) => {
       photoURL: $formElements.photoURL.value,
       notes: $formElements.notes.value,
       entryId: data.editing.entryId,
+      author: 'user',
     };
     for (let i = 0; i < data.entries.length; i++) {
       if (data.entries[i].entryId === data.editing.entryId) {

@@ -26,9 +26,14 @@
         <div class="align-end shrink">
           <h1>Code Journal</h1>
         </div>
-        <div class="column-fourth align-end links">
+        <div class="align-end links">
           <h3>
             <a href="#" id="entries-link">Entries</a>
+          </h3>
+        </div>
+        <div class="column-fourth flex align-end links">
+          <h3>
+            <a href="#" id="login-link">Login</a>
           </h3>
         </div>
         <div class="column-fourth align-end">
@@ -39,6 +44,29 @@
       </div>
     </header>
     <main class="container">
+      <div class="" data-view="login-form" id="login-form">
+        <div class="row justify-center">
+          <div class="column-half">
+            <form action="#">
+              <label for="username">Username</label>
+              <input type="text" name="username" id="username" />
+              <label for="email">Email</label>
+              <input type="email" name="email" id="email" />
+              <label for="password"
+                >Password &#10088;must be greater than 8 characters and include
+                a number&#10089;</label
+              >
+              <input type="password" name="password" id="password" />
+              <label for="confirm-password">Confirm Password</label>
+              <input
+                type="password"
+                name="confirm-password"
+                id="confirm-password" />
+              <input class="purple-button" type="submit" />
+            </form>
+          </div>
+        </div>
+      </div>
       <div class="hidden" data-view="entry-form" id="entry-form">
         <form action="" id="new-entry-form">
           <div class="row">
@@ -91,7 +119,7 @@
           </div>
         </form>
       </div>
-      <div class="" data-view="entries" id="entry-container">
+      <div class="hidden" data-view="entries" id="entry-container">
         <div class="row space-between">
           <h1>Entries</h1>
           <a href="#" class="purple-button align-center" id="new-btn">New</a>

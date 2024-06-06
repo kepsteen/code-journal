@@ -5,6 +5,7 @@ let data = {
   entries: [],
   editing: null,
   nextEntryId: 1,
+  currentUser: null,
 };
 window.addEventListener('beforeunload', () => {
   const dataJSON = JSON.stringify(data);

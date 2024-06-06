@@ -169,6 +169,12 @@ dialog::backdrop {
   flex-basis: 100%;
 }
 
+/* Issue 6 CSS */
+
+#login-link {
+  text-align: right;
+}
+
 @media screen and (width >= 768px) {
   html {
     font-size: 100%;

@@ -4,6 +4,7 @@ interface Entry {
   photoURL: string;
   notes: string;
   entryId: number;
+  author: string;
 }
 
 interface FormElements extends HTMLFormControlsCollection {
@@ -49,6 +50,9 @@ const $searchBar = document.querySelector('#search-bar') as HTMLInputElement;
 const $noEntriesFound = document.querySelector(
   '#no-entries-found',
 ) as HTMLParagraphElement;
+const $loginFormContainer = document.querySelector(
+  '#login-form',
+) as HTMLDivElement;
 
 if (!$photoURL) throw new Error('no photoURL input found');
 if (!$newEntryImage) throw new Error('no image found');
@@ -67,6 +71,7 @@ if (!$confirmationModal) throw new Error('no delete modal found');
 if (!$confirmationButtons) throw new Error('no confirmation buttons found');
 if (!$searchBar) throw new Error('no search bar found');
 if (!$noEntriesFound) throw new Error('no no entries found li found');
+if (!$loginFormContainer) throw new Error('no login form found');
 
 function renderEntry(entry: Entry): HTMLLIElement {
   const $listElement = document.createElement('li');
@@ -119,9 +124,15 @@ function viewSwap(view: string): void {
   if ($entryFormContainer.dataset.view === view) {
     $entryFormContainer.setAttribute('class', '');
     $entryContainer.setAttribute('class', 'hidden');
+    $loginFormContainer.setAttribute('class', 'hidden');
   } else if ($entryContainer.dataset.view === view) {
     $entryContainer.setAttribute('class', '');
     $entryFormContainer.setAttribute('class', 'hidden');
+    $loginFormContainer.setAttribute('class', 'hidden');
+  } else if ($loginFormContainer.dataset.view === view) {
+    $loginFormContainer.setAttribute('class', '');
+    $entryFormContainer.setAttribute('class', 'hidden');
+    $entryContainer.setAttribute('class', 'hidden');
   }
   data.view = view;
 }
@@ -142,10 +153,14 @@ function deleteEntry(entry: Entry): void {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  viewSwap(data.view);
-  toggleNoEntries();
-  for (let i = 0; i < data.entries.length; i++) {
-    $cardList.appendChild(renderEntry(data.entries[i]));
+  if (data.currentUser === null) {
+    viewSwap('login-form');
+  } else {
+    viewSwap(data.view);
+    toggleNoEntries();
+    for (let i = 0; i < data.entries.length; i++) {
+      $cardList.appendChild(renderEntry(data.entries[i]));
+    }
   }
 });
 
@@ -167,6 +182,7 @@ $newEntryForm.addEventListener('submit', (event: Event) => {
       photoURL: $formElements.photoURL.value,
       notes: $formElements.notes.value,
       entryId: data.nextEntryId,
+      author: 'user',
     };
     data.entries.unshift(entry);
     data.nextEntryId++;
@@ -177,6 +193,7 @@ $newEntryForm.addEventListener('submit', (event: Event) => {
       photoURL: $formElements.photoURL.value,
       notes: $formElements.notes.value,
       entryId: data.editing.entryId,
+      author: 'user',
     };
     for (let i = 0; i < data.entries.length; i++) {
       if (data.entries[i].entryId === data.editing.entryId) {

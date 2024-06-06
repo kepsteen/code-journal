@@ -5,6 +5,7 @@ interface Data {
   entries: Entry[];
   editing: null | Entry;
   nextEntryId: number;
+  currentUser: null | string;
 }
 
 let data: Data = {
@@ -12,6 +13,7 @@ let data: Data = {
   entries: [],
   editing: null,
   nextEntryId: 1,
+  currentUser: null,
 };
 
 window.addEventListener('beforeunload', () => {
