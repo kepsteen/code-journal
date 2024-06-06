@@ -23,5 +23,4 @@ const previousJSON = localStorage.getItem('code-journal-data');
 if (previousJSON) {
   const parsedDataJSON = JSON.parse(previousJSON);
   data = parsedDataJSON;
-  console.log(data);
 }

@@ -30,7 +30,9 @@ const $entriesAnchor = document.querySelector(
   '#entries-link',
 ) as HTMLAnchorElement;
 const $newEntryBtn = document.querySelector('#new-btn') as HTMLAnchorElement;
-const $noEntry = document.querySelector('#no-entries') as HTMLLIElement;
+const $noEntry = document.querySelector(
+  '#no-entries-added',
+) as HTMLParagraphElement;
 const $titleInput = document.querySelector('#title') as HTMLInputElement;
 const $notesTextArea = document.querySelector('#notes') as HTMLTextAreaElement;
 const $pageHeader = document.querySelector(
@@ -44,6 +46,9 @@ const $confirmationButtons = document.querySelector(
   '#confirm-btns',
 ) as HTMLDivElement;
 const $searchBar = document.querySelector('#search-bar') as HTMLInputElement;
+const $noEntriesFound = document.querySelector(
+  '#no-entries-found',
+) as HTMLParagraphElement;
 
 if (!$photoURL) throw new Error('no photoURL input found');
 if (!$newEntryImage) throw new Error('no image found');
@@ -61,6 +66,7 @@ if (!$deleteAnchor) throw new Error('no delete anchor found');
 if (!$confirmationModal) throw new Error('no delete modal found');
 if (!$confirmationButtons) throw new Error('no confirmation buttons found');
 if (!$searchBar) throw new Error('no search bar found');
+if (!$noEntriesFound) throw new Error('no no entries found li found');
 
 function renderEntry(entry: Entry): HTMLLIElement {
   const $listElement = document.createElement('li');
@@ -132,12 +138,6 @@ function deleteEntry(entry: Entry): void {
   }
   if (data.entries.length === 0) {
     toggleNoEntries();
-  }
-}
-
-function clearCardList(): void {
-  while ($cardList.firstChild) {
-    $cardList.removeChild($cardList.firstChild);
   }
 }
 
@@ -251,24 +251,28 @@ $confirmationButtons.addEventListener('click', (event: Event) => {
 
 $searchBar.addEventListener('input', () => {
   const keyword = $searchBar.value.toLowerCase();
+  const $listElementCollection =
+    $cardList.children as HTMLCollectionOf<HTMLLIElement>;
   if (keyword === '') {
-    clearCardList();
-    for (const entry of data.entries) {
-      $cardList.append(renderEntry(entry));
+    for (let i = 0; i < $listElementCollection.length; i++) {
+      $listElementCollection[i].classList.remove('hidden');
     }
+    $noEntriesFound.classList.add('hidden');
   } else {
-    const entryMatchesKeyword = [];
-    for (let i = 0; i < data.entries.length; i++) {
+    let matchesFound = false;
+    for (let i = 0; i < $listElementCollection.length; i++) {
       if (
-        data.entries[i].title.toLowerCase().includes(keyword) ||
-        data.entries[i].notes.toLowerCase().includes(keyword)
+        !$listElementCollection[i].innerText.toLowerCase().includes(keyword)
       ) {
-        entryMatchesKeyword.push(data.entries[i]);
+        $listElementCollection[i].classList.add('hidden');
+      } else if (
+        $listElementCollection[i].innerText.toLowerCase().includes(keyword)
+      ) {
+        matchesFound = true;
       }
     }
-    clearCardList();
-    for (let i = 0; i < entryMatchesKeyword.length; i++) {
-      $cardList.appendChild(renderEntry(entryMatchesKeyword[i]));
+    if (!matchesFound) {
+      $noEntriesFound.classList.remove('hidden');
     }
   }
 });

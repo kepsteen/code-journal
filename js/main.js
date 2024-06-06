@@ -7,7 +7,7 @@ const $entryFormContainer = document.querySelector('#entry-form');
 const $entryContainer = document.querySelector('#entry-container');
 const $entriesAnchor = document.querySelector('#entries-link');
 const $newEntryBtn = document.querySelector('#new-btn');
-const $noEntry = document.querySelector('#no-entries');
+const $noEntry = document.querySelector('#no-entries-added');
 const $titleInput = document.querySelector('#title');
 const $notesTextArea = document.querySelector('#notes');
 const $pageHeader = document.querySelector('#new-edit-entry');
@@ -15,6 +15,7 @@ const $deleteAnchor = document.querySelector('#delete-a');
 const $confirmationModal = document.querySelector('#delete-entry-modal');
 const $confirmationButtons = document.querySelector('#confirm-btns');
 const $searchBar = document.querySelector('#search-bar');
+const $noEntriesFound = document.querySelector('#no-entries-found');
 if (!$photoURL) throw new Error('no photoURL input found');
 if (!$newEntryImage) throw new Error('no image found');
 if (!$newEntryForm) throw new Error('no form element found');
@@ -31,6 +32,7 @@ if (!$deleteAnchor) throw new Error('no delete anchor found');
 if (!$confirmationModal) throw new Error('no delete modal found');
 if (!$confirmationButtons) throw new Error('no confirmation buttons found');
 if (!$searchBar) throw new Error('no search bar found');
+if (!$noEntriesFound) throw new Error('no no entries found li found');
 function renderEntry(entry) {
   const $listElement = document.createElement('li');
   $listElement.setAttribute('class', 'card-wrapper');
@@ -97,11 +99,6 @@ function deleteEntry(entry) {
   }
   if (data.entries.length === 0) {
     toggleNoEntries();
-  }
-}
-function clearCardList() {
-  while ($cardList.firstChild) {
-    $cardList.removeChild($cardList.firstChild);
   }
 }
 document.addEventListener('DOMContentLoaded', () => {
@@ -206,24 +203,27 @@ $confirmationButtons.addEventListener('click', (event) => {
 });
 $searchBar.addEventListener('input', () => {
   const keyword = $searchBar.value.toLowerCase();
+  const $listElementCollection = $cardList.children;
   if (keyword === '') {
-    clearCardList();
-    for (let entry of data.entries) {
-      $cardList.append(renderEntry(entry));
+    for (let i = 0; i < $listElementCollection.length; i++) {
+      $listElementCollection[i].classList.remove('hidden');
     }
+    $noEntriesFound.classList.add('hidden');
   } else {
-    const entryMatchesKeyword = [];
-    for (let i = 0; i < data.entries.length; i++) {
+    let matchesFound = false;
+    for (let i = 0; i < $listElementCollection.length; i++) {
       if (
-        data.entries[i].title.toLowerCase().includes(keyword) ||
-        data.entries[i].notes.toLowerCase().includes(keyword)
+        !$listElementCollection[i].innerText.toLowerCase().includes(keyword)
       ) {
-        entryMatchesKeyword.push(data.entries[i]);
+        $listElementCollection[i].classList.add('hidden');
+      } else if (
+        $listElementCollection[i].innerText.toLowerCase().includes(keyword)
+      ) {
+        matchesFound = true;
       }
     }
-    clearCardList();
-    for (let i = 0; i < entryMatchesKeyword.length; i++) {
-      $cardList.appendChild(renderEntry(entryMatchesKeyword[i]));
+    if (!matchesFound) {
+      $noEntriesFound.classList.remove('hidden');
     }
   }
 });
