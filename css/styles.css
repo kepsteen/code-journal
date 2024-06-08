@@ -19,7 +19,7 @@ label {
 }
 
 i {
-  color: #4b2473;
+  color: #264653;
 }
 
 p {
@@ -52,7 +52,7 @@ form {
 
 .header {
   margin-top: 0;
-  background-color: #4b2473;
+  background-color: #264653;
   color: white;
 }
 
@@ -62,7 +62,7 @@ header.container {
 
 .purple-button {
   font-family: Lora, serif;
-  background-color: #4b2473;
+  background-color: #264653;
   border-radius: 5px;
   color: white;
   padding: 6px;
@@ -173,6 +173,10 @@ dialog::backdrop {
 
 #login-link {
   text-align: right;
+}
+
+#passwords-dont-match {
+  color: red;
 }
 
 @media screen and (width >= 768px) {

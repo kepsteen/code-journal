@@ -33,7 +33,7 @@
         </div>
         <div class="column-fourth flex align-end links">
           <h3>
-            <a href="#" id="login-link">Login</a>
+            <a href="#" id="login-link">Logout</a>
           </h3>
         </div>
         <div class="column-fourth align-end">
@@ -44,28 +44,49 @@
       </div>
     </header>
     <main class="container">
-      <div class="" data-view="login-form" id="login-form">
+      <div class="" data-view="login-form" id="login-form-container">
         <div class="row justify-center">
           <div class="column-half">
-            <form action="#">
+            <form action="#" id="login-form">
               <label for="username">Username</label>
               <input type="text" name="username" id="username" />
-              <label for="email">Email</label>
-              <input type="email" name="email" id="email" />
               <label for="password"
                 >Password &#10088;must be greater than 8 characters and include
                 a number&#10089;</label
               >
               <input type="password" name="password" id="password" />
-              <label for="confirm-password">Confirm Password</label>
-              <input
-                type="password"
-                name="confirm-password"
-                id="confirm-password" />
-              <input class="purple-button" type="submit" />
+              <button type="submit" class="purple-button" id="login-btn">
+                Login
+              </button>
             </form>
+            <a href="#" class="purple-button" id="redirect-signup-btn"
+              >Sign up</a
+            >
           </div>
         </div>
+      </div>
+      <div class="hidden" data-view="signup-form" id="signup-form-container">
+        <form action="#" id="signup-form" class="">
+          <label for="signup-username">Username</label>
+          <input type="text" name="signup-username" id="signup-username" />
+          <label for="email">Email</label>
+          <input type="email" name="email" id="email" />
+          <label for="password"
+            >Password &#10088;must be greater than 8 characters and include a
+            number&#10089;</label
+          >
+          <p class="hidden" id="invalid-password">invalid password</p>
+          <input type="password" name="login-password" id="login-password" />
+          <label for="confirm-password">Confirm Password</label>
+          <p class="hidden" id="passwords-dont-match">Passwords Don't match</p>
+          <input
+            type="password"
+            name="confirm-password"
+            id="confirm-password" />
+          <button type="submit" class="purple-button" id="signup-btn">
+            Sign Up
+          </button>
+        </form>
       </div>
       <div class="hidden" data-view="entry-form" id="entry-form">
         <form action="" id="new-entry-form">

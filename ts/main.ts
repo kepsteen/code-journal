@@ -4,13 +4,25 @@ interface Entry {
   photoURL: string;
   notes: string;
   entryId: number;
-  author: string;
+  author?: string;
 }
 
-interface FormElements extends HTMLFormControlsCollection {
+interface NewEntryFormElements extends HTMLFormControlsCollection {
   title: HTMLInputElement;
   photoURL: HTMLInputElement;
   notes: HTMLTextAreaElement;
+}
+
+interface LoginFormElements extends HTMLFormControlsCollection {
+  username: HTMLInputElement;
+  password: HTMLInputElement;
+}
+
+interface SubmitFormElements extends HTMLFormControlsCollection {
+  username: HTMLInputElement;
+  email: HTMLInputElement;
+  password: HTMLInputElement;
+  confirmPassword: HTMLInputElement;
 }
 
 const $photoURL = document.querySelector('#photo-url') as HTMLInputElement;
@@ -51,8 +63,29 @@ const $noEntriesFound = document.querySelector(
   '#no-entries-found',
 ) as HTMLParagraphElement;
 const $loginFormContainer = document.querySelector(
-  '#login-form',
+  '#login-form-container',
 ) as HTMLDivElement;
+const $loginForm = document.querySelector('#login-form') as HTMLFormElement;
+const $logoutAnchor = document.querySelector(
+  '#login-link',
+) as HTMLAnchorElement;
+const $signupFormContainer = document.querySelector(
+  '#signup-form-container',
+) as HTMLDivElement;
+const $redirectSignupBtn = document.querySelector(
+  '#redirect-signup-btn',
+) as HTMLAnchorElement;
+const $signupForm = document.querySelector('#signup-form') as HTMLFormElement;
+const $invalidPassword = document.querySelector(
+  '#invalid-password',
+) as HTMLParagraphElement;
+const $passwordsDontMatch = document.querySelector(
+  '#passwords-dont-match',
+) as HTMLParagraphElement;
+const $passwordInput = document.querySelector('#password') as HTMLInputElement;
+const $confirmPasswordInput = document.querySelector(
+  '#confirm-password',
+) as HTMLInputElement;
 
 if (!$photoURL) throw new Error('no photoURL input found');
 if (!$newEntryImage) throw new Error('no image found');
@@ -71,7 +104,16 @@ if (!$confirmationModal) throw new Error('no delete modal found');
 if (!$confirmationButtons) throw new Error('no confirmation buttons found');
 if (!$searchBar) throw new Error('no search bar found');
 if (!$noEntriesFound) throw new Error('no no entries found li found');
-if (!$loginFormContainer) throw new Error('no login form found');
+if (!$loginFormContainer) throw new Error('no login form container found');
+if (!$loginForm) throw new Error('No login form element found');
+if (!$logoutAnchor) throw new Error('No login anchor found');
+if (!$signupFormContainer) throw new Error('No signup form container found');
+if (!$redirectSignupBtn) throw new Error('no redirect signup btn found');
+if (!$signupForm) throw new Error('No signup form found');
+if (!$invalidPassword) throw new Error('no invalid password p found');
+if (!$passwordsDontMatch) throw new Error('no pwdsdntmatch found');
+if (!$passwordInput || !$confirmPasswordInput)
+  throw new Error('pwd inputs not found');
 
 function renderEntry(entry: Entry): HTMLLIElement {
   const $listElement = document.createElement('li');
@@ -110,10 +152,15 @@ function renderEntry(entry: Entry): HTMLLIElement {
 }
 
 function toggleNoEntries(): void {
-  if (!$noEntry.classList.contains('hidden') && data.entries.length !== 0) {
+  if (
+    !$noEntry.classList.contains('hidden') &&
+    data.currentUser !== null &&
+    data.currentUser.entries.length !== 0
+  ) {
     $noEntry.classList.add('hidden');
   } else if (
-    data.entries.length === 0 &&
+    data.currentUser !== null &&
+    data.currentUser.entries.length === 0 &&
     $noEntry.classList.contains('hidden')
   ) {
     $noEntry.classList.remove('hidden');
@@ -121,16 +168,25 @@ function toggleNoEntries(): void {
 }
 
 function viewSwap(view: string): void {
+  console.log('view', data.view);
   if ($entryFormContainer.dataset.view === view) {
     $entryFormContainer.setAttribute('class', '');
     $entryContainer.setAttribute('class', 'hidden');
     $loginFormContainer.setAttribute('class', 'hidden');
+    $signupFormContainer.setAttribute('class', 'hidden');
   } else if ($entryContainer.dataset.view === view) {
     $entryContainer.setAttribute('class', '');
     $entryFormContainer.setAttribute('class', 'hidden');
     $loginFormContainer.setAttribute('class', 'hidden');
+    $signupFormContainer.setAttribute('class', 'hidden');
   } else if ($loginFormContainer.dataset.view === view) {
     $loginFormContainer.setAttribute('class', '');
+    $entryFormContainer.setAttribute('class', 'hidden');
+    $entryContainer.setAttribute('class', 'hidden');
+    $signupFormContainer.setAttribute('class', 'hidden');
+  } else if ($signupFormContainer.dataset.view === view) {
+    $signupFormContainer.setAttribute('class', '');
+    $loginFormContainer.setAttribute('class', 'hidden');
     $entryFormContainer.setAttribute('class', 'hidden');
     $entryContainer.setAttribute('class', 'hidden');
   }
@@ -138,18 +194,57 @@ function viewSwap(view: string): void {
 }
 
 function deleteEntry(entry: Entry): void {
-  let indexToRemove = null;
-  for (let i = 0; i < data.entries.length; i++) {
-    if (data.entries[i].entryId === entry.entryId) {
-      indexToRemove = i;
+  let dataIndexToRemove = null;
+  let userIndexToRemove = null;
+  if (data.currentUser) {
+    for (let i = 0; i < data.entries.length; i++) {
+      if (data.entries[i].entryId === entry.entryId) {
+        dataIndexToRemove = i;
+      }
+    }
+    for (let i = 0; i < data.currentUser.entries.length; i++) {
+      if (data.currentUser.entries[i].entryId === entry.entryId) {
+        userIndexToRemove = i;
+      }
     }
   }
-  if (indexToRemove !== null) {
-    data.entries.splice(indexToRemove, 1);
+  if (dataIndexToRemove !== null && userIndexToRemove !== null) {
+    data.entries.splice(dataIndexToRemove, 1);
+    data.currentUser?.entries.splice(userIndexToRemove, 1);
+    console.log('user entries', data.currentUser.entries);
   }
-  if (data.entries.length === 0) {
+  if (data.currentUser?.entries.length === 0) {
     toggleNoEntries();
   }
+}
+
+function clearList(list: HTMLUListElement): void {
+  while (list.firstChild) {
+    list.firstChild.remove();
+  }
+}
+
+function checkPassword(password: any, confirmPassword: string): boolean {
+  let validPassword = false;
+  for (let i = 0; i < password.length; i++) {
+    if (!isNaN(password[i]) && password.length > 8) {
+      console.log('valid password');
+      validPassword = true;
+      $invalidPassword.classList.remove('hidden');
+    }
+  }
+  if (!validPassword) {
+    $invalidPassword.classList.remove('hidden');
+  }
+  if (password === confirmPassword) {
+    validPassword = true;
+    $passwordsDontMatch.classList.remove('hidden');
+  } else {
+    validPassword = false;
+    $passwordsDontMatch.classList.add('hidden');
+  }
+  if (validPassword) return true;
+  else return false;
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -158,8 +253,8 @@ document.addEventListener('DOMContentLoaded', () => {
   } else {
     viewSwap(data.view);
     toggleNoEntries();
-    for (let i = 0; i < data.entries.length; i++) {
-      $cardList.appendChild(renderEntry(data.entries[i]));
+    for (let i = 0; i < data.currentUser.entries.length; i++) {
+      $cardList.appendChild(renderEntry(data.currentUser.entries[i]));
     }
   }
 });
@@ -174,26 +269,26 @@ $photoURL.addEventListener('input', () => {
 
 $newEntryForm.addEventListener('submit', (event: Event) => {
   event.preventDefault();
-
-  const $formElements = $newEntryForm.elements as FormElements;
-  if (data.editing === null) {
+  const $newEntryFormElements = $newEntryForm.elements as NewEntryFormElements;
+  if (data.editing === null && data.currentUser !== null) {
     const entry: Entry = {
-      title: $formElements.title.value,
-      photoURL: $formElements.photoURL.value,
-      notes: $formElements.notes.value,
+      title: $newEntryFormElements.title.value,
+      photoURL: $newEntryFormElements.photoURL.value,
+      notes: $newEntryFormElements.notes.value,
       entryId: data.nextEntryId,
-      author: 'user',
+      author: data.currentUser.username,
     };
+    data.currentUser.entries.unshift(entry); // Need to make sure only logged in users can make new posts
     data.entries.unshift(entry);
     data.nextEntryId++;
     $cardList.prepend(renderEntry(data.entries[0]));
-  } else if (data.editing) {
+  } else if (data.editing && data.currentUser !== null) {
     const entry: Entry = {
-      title: $formElements.title.value,
-      photoURL: $formElements.photoURL.value,
-      notes: $formElements.notes.value,
+      title: $newEntryFormElements.title.value,
+      photoURL: $newEntryFormElements.photoURL.value,
+      notes: $newEntryFormElements.notes.value,
       entryId: data.editing.entryId,
-      author: 'user',
+      author: data.currentUser.username,
     };
     for (let i = 0; i < data.entries.length; i++) {
       if (data.entries[i].entryId === data.editing.entryId) {
@@ -204,7 +299,13 @@ $newEntryForm.addEventListener('submit', (event: Event) => {
         $listElementToReplace.replaceWith(renderEntry(data.entries[i]));
       }
     }
+    for (let i = 0; i < data.currentUser.entries.length; i++) {
+      if (data.currentUser.entries[i].entryId === data.editing.entryId) {
+        data.currentUser.entries[i] = entry;
+      }
+    }
   }
+  console.log('current user', data.currentUser);
   data.editing = null;
   $newEntryImage.setAttribute('src', 'images/placeholder-image-square.jpg');
   $newEntryForm.reset();
@@ -223,6 +324,7 @@ $newEntryBtn.addEventListener('click', () => {
 });
 
 $cardList.addEventListener('click', (event: Event): void => {
+  console.log('current user', data.currentUser);
   const $eventTarget = event.target as HTMLElement;
   if ($eventTarget.tagName === 'I') {
     viewSwap('entry-form');
@@ -292,4 +394,84 @@ $searchBar.addEventListener('input', () => {
       $noEntriesFound.classList.remove('hidden');
     }
   }
+});
+
+$loginForm.addEventListener('submit', (event: Event): void => {
+  console.log('event.target', event.target);
+  event.preventDefault();
+  clearList($cardList);
+  const $loginFormElements = $loginForm.elements as LoginFormElements;
+  const usernameInput = $loginFormElements.username.value;
+  const passwordInput = $loginFormElements.password.value;
+  for (const user of data.users) {
+    if (user.username === usernameInput) {
+      console.log('username matches user in the system');
+      if (user.password === passwordInput) {
+        $loginForm.reset();
+        data.currentUser = user;
+        console.log('user logged in', data.currentUser);
+        for (const entry of data.currentUser.entries) {
+          $cardList.appendChild(renderEntry(entry));
+        }
+        viewSwap('entries');
+        toggleNoEntries();
+        return;
+      } else {
+        console.log('password is incorrect');
+      }
+    }
+  }
+  console.log('account not found');
+});
+
+$logoutAnchor.addEventListener('click', () => {
+  if (data.currentUser === null) {
+    console.log('you need to log in');
+    viewSwap('login-form');
+  } else if (data.currentUser) {
+    clearList($cardList);
+    data.currentUser = null;
+    viewSwap('login-form');
+    console.log(data);
+  }
+});
+
+$redirectSignupBtn.addEventListener('click', (event: Event) => {
+  console.log('event target', event.target);
+  console.log(data.view);
+  viewSwap('signup-form');
+});
+
+$signupForm.addEventListener('submit', (event: Event) => {
+  event.preventDefault();
+  const $signupFormElements = $signupForm.elements as SubmitFormElements;
+  const user: Credentials = {
+    username: $signupFormElements.username.value,
+    email: $signupFormElements.email.value,
+    password: $signupFormElements.password.value,
+    userId: data.nextUserId,
+    entries: [],
+  };
+  console.log(user);
+  // if (
+  //   checkPassword(
+  //     $signupFormElements.password.value,
+  //     $signupFormElements.confirmPassword.value,
+  //   )
+  // ) {
+  //   data.nextUserId++;
+  //   data.users.push(user);
+  //   data.currentUser = user;
+  //   viewSwap('entries');
+  // } else {
+  //   return;
+  // }
+});
+
+$passwordInput.addEventListener('input', () => {
+  checkPassword($passwordInput.value, $confirmPasswordInput.value);
+});
+
+$confirmPasswordInput.addEventListener('input', () => {
+  checkPassword($passwordInput.value, $confirmPasswordInput.value);
 });
